@@ -1,7 +1,5 @@
 # Machine Learning: Fundamentos, aplicacions y computación
 
-Horario tentativo
-
 ## Sesión 1 (2 horas) – Introducción
 
 * ¿Qué es Machine Learning?
