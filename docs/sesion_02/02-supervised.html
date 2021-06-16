@@ -234,7 +234,7 @@ La función de pérdida log-loss es un poco distinta a como la vimos antes
 
 * Por defecto se usa la función de enlace "canónica", pero esto se puede modificar (ver ayuda)
 
-* Implementa el algoritmo IRLS (Newton-Raphson), que se puede generalizar para cualquier GLM donde la distribución pertenece a la familia exponencial
+* Implementa el algoritmo IRLS (Newton-Raphson), que se puede generalizar para cualquier GLM cuya distribución pertenece a la familia exponencial
 
 Ejemplo: regresión logística
 
@@ -260,36 +260,10 @@ fit &lt;- glm(type ~ ., data=Pima.tr, family=binomial)
 
 ## Regularización
 
+* Regular el trade-off utilizando un parámetro de control
+
 * Regresión *ridge* (*MSE* + regularización `\(l_2\)`): `$$\min_w\, ||y - \Xbf w||_2^2 + \lambda ||w||_2^2$$`
 
-
----
-
-## Lasso: motivación
-
-* Métodos de selección: 
-   
-   * ![:colorText green](modelos interpretables)
-    
-   * ![:colorText red](proceso discreto, las variables están incluidas o no)
-
-
-* Regresión *ridge*: 
-
-  * ![:colorText green](proceso continuo, todos los coeficientes se reducen)
-
-  * ![:colorText red](rara vez son exactanente 0, modelos no interpretables)
-
-
-* Lasso es una técnica intermedia:
-
-  * ![:colorText green](reduce algunos coeficientes)
-  
-  * ![:colorText green](pone el resto a 0)
-
-???
-
-Modelos seleccion: variables entran o salen del modelo
 
 ---
 
@@ -309,11 +283,27 @@ Modelos seleccion: variables entran o salen del modelo
 
 ---
 
-class: middle, center
 
-![:video 600 600](img/lasso.mp4)
+## Lasso: motivación
 
-[Pierre Ablin](https://twitter.com/PierreAblin/status/1107625298936451073?s=20), Twitter
+
+* Regresión *ridge*: 
+
+  * ![:colorText green](proceso continuo, todos los coeficientes se reducen)
+
+  * ![:colorText red](rara vez son exactanente 0, modelos no interpretables)
+
+
+* Lasso:
+
+  * ![:colorText green](reduce algunos coeficientes)
+  
+  * ![:colorText green](pone el resto a 0)
+
+???
+
+Modelos seleccion: variables entran o salen del modelo
+
 
 ---
 
@@ -331,44 +321,10 @@ class: middle, center
 
 ![](img/constraint_regions.png)
 
----
 
-## Lasso, best subset y fordward stepwise
 
-* Comparación Lasso, *best subset* y *forward stepwise* [(Hastie et al., 2017)](https://arxiv.org/pdf/1707.08692.pdf)
 
-* Experimentos en [Github, best-subset](https://github.com/ryantibs/best-subset/)
 
-* [*Relaxed* Lasso](https://stat.ethz.ch/~nicolai/relaxo.pdf): ajustar otro modelo sobre las variables que selecciona el Lasso
-
-???
-
-[Relaxed Lasso](https://stats.stackexchange.com/questions/122955/why-is-relaxed-lasso-different-from-standard-lasso)
-
----
-
-## Lasso: limitaciones
-
-1. Si `\(d &gt; n\)`, como mucho `\(n\)` coeficientes son `\(\neq 0\)`
-
-    * Limitación desde el punto de vista de selección de variables
-
-2. Variables con correlación alta `\(\Longrightarrow\)` Lasso selecciona una "aleatoriamente"
-
-3. Si `\(n &gt; d\)` y hay variables con correlación alta `\(\Longrightarrow\)` error de Ridge &lt; error de Lasso
-
----
-
-## Otras penalizaciones
-
-* Podemos generalizar Lasso, Ridge y Best subset como `$$\min_w || y - \Xbf w ||_2^2 + \lambda || w ||_p^p$$`
-donde, `$$|| w ||_p^p = \sum_{i=1}^d{|x_i|^p}$$`
-
-* `\(0 \leq p &lt; 1\)`, no convexas (![:colorText red](NP-completo!))
-
-* `\(p = 1\)`, convexa y no diferenciable 
-
-* `\(p &gt; 1\)`, convexas y diferenciables
 
 ---
 
@@ -380,54 +336,13 @@ donde, `$$|| w ||_p^p = \sum_{i=1}^d{|x_i|^p}$$`
 
 * Lasso: distribución de Laplace, `\(\tau = 1/\lambda\)` `$$f(w) = \frac{1}{2\tau} \exp\bigg(-\frac{|w|}{\tau}\bigg)$$`
 
-* Estimadores: máximo de la distribución a posteriori (MAP)
+* Estimador: máximo de la distribución a posteriori (MAP)
   
-  * Ridge: coincide con la media
-  * Lasso y Best subset: moda
+* Demuéstralo
 
 ---
 
-class: center, middle
-
-![](img/laplace.svg)
-
-[Wikipedia, "Laplace distribution"](https://en.wikipedia.org/wiki/Laplace_distribution)
-
----
-
-class: middle, center
-
-![](img/penalties.png)
-
----
-
-## Elastic Net
-
-* Combina regularización Lasso y Ridge: `$$\min_w\, || y - \Xbf w ||_2^2 + \lambda_1 || w ||_1 + \lambda_2 || w ||_2^2$$`
-
-* Otra parametrización con `\(\alpha \in (0, 1)\)`: `$$\min_w\, || y - \Xbf w ||_2^2 + \lambda(\alpha || w ||_1 + (1 - \alpha) || w ||_2^2)$$`
-
-* Equivalentes con 
-
-  * `\(\alpha = \lambda_1/(\lambda_1 + \lambda_2)\)` 
-  
-  * `\(\lambda = \lambda_1 + \lambda_2\)`
-  
-* Selecciona variables y reduce el resto de coeficientes
-
----
-
-class: center, middle
-
-![:scale 85%](img/penalties.svg)
-
-???
-
-Ventaja de parametrizacion 2: `\(\lambda\)` te da la distancia al origen, y `\(\alpha\)` la curvatura
-
----
-
-## Notación
+## Nota
 
 * Lasso (Elastic Net) suelen hacer referencia a: minimizar MSE + norma `\(l_1\)` (+ norma `\(l_2\)`)
 
@@ -437,356 +352,531 @@ Ventaja de parametrizacion 2: `\(\lambda\)` te da la distancia al origen, y `\(\
 
 * En esos casos hablamos de regresión logística, Poisson, Gamma + regularización Ridge/Lasso/Elastic Net
 
----
-
-## Elastic Net en R
-
-* Paquete `glmnet`
-
-* Implementa descenso coordenado cíclico (detalles más adelante)
-
-* Resuelve GLMs con regularización `\(l_1\)` (Lasso), `\(l_2\)` (Ridge) o ambas (ElasticNet)
-
-* Sin interfaz de fórmulas
-
-  * Hay que crear la matriz `\(\Xbf\)` "a mano"
-
-* Elige automáticamente el valor óptimo de `\(\lambda\)` (pero no `\(\alpha\)`!)
-
-* Puede ser interesante la extensión `glmnetUtils`
-
-???
-
-En particular codificar las variables categóricas!
-**Ejercicio titanic**
 
 ---
 
 class: middle, center, inverse
-
-# Métodos de reducción
-
----
-
-## Principal Component Regression
-
-* Calcular las `\(m\)` componentes principales, `\(\Vbf \in \Rbb^{d \times m}\)`
-
-* Crear combinaciones lineales de las variables originales: `\(\Zbf = \Xbf \Vbf \in \Rbb^{n \times m}\)`
-
-* Ajustar una regresión lineal, `\(y = \Zbf \theta\)`, `$$\theta^* = (\Zbf^T \Zbf)^{-1} \Zbf^T y$$`
-
-* `\(\Zbf\)` es ortogonal, por lo que los `\(\theta_m\)` son independientes `$$\theta_m = \frac{z_m^T y}{z_m^T z_m}$$`
-
-* Coeficientes sobre los datos originales `\(\Xbf\)`: `$$y = \Zbf \theta = \Xbf \Vbf \theta = \Xbf w\; \Rightarrow\; w = \Vbf \theta$$`
+# Redes Neuronales
 
 ---
 
-## PCR, OLS y Ridge Regression
+## Problemas (hasta ahora)
 
-* Componentes principales dependientes de la escala `\(\Rightarrow\)` estandarizar
+* Para resolver hipótesis lineal: metemos variables a mano (*feature engineering*)
 
-* Si `\(m = d\)`, se obtienen el estimador de mínimos cuadrados (OLS)
+* Queremos que **aprender** las covariables relevantes (representaciones)
 
-* Si `\(m &lt; d\)`, se obtiene una versión reducida de la regresión
+* Esperamos que en este nuevo espacio el problema de aprendizaje sea más sencillo
 
-* Ridge Regression:
+
+* Crear nuevas variables es, típicamente:
+
+  1. critico para obtener buen rendimiento
   
-  * reduce los coeficientes de las componentes principales 
+  2. muy dependiente del problema
   
-  * reduce más cuanto más grande sea el autovalor
-  
-* PCR descarta las `\(d - m\)` componentes principales con menor autovalor
-
-* `\(m\)` se puede elegir por validación cruzada
+* Ejemplo: extraer variables de datos no tabulares (audio, video, imágenes, texto)
 
 ???
+* Añadimos una capa intermedia (capa oculta)
 
-Z abarca el espacio de columnas de X
+.center[
+![:scale 45%](./img/Colored_neural_network.svg)
 
----
+[Fuente](https://en.wikipedia.org/wiki/Artificial_neural_network)
+]
 
-class: middle, center
 
-![](img/ridge_vs_pcr.png)
-
----
-
-## PCR, Lasso y Best subset
-
-* Lasso y Best subset obtienen modelos interpretables
-
-* PCR reduce las variables, pero son combinaciones lineales de las originales
-
-* Computacionalmente:
-
-    * Best subset es factible para `\(d \approx 100\)`
-    
-    * Lasso y PCR tienen aprox. el mismo coste
-
-* PCR puede ser útil para situaciones con muchas variables altamente correladas
 
 ---
 
-## Partial Least Squares
+class: center, middle
 
-* Igual que con PCR, es importante estandarizar las `\(x_j\)`
+![](./img/coordinate_change.png)
 
-* Algoritmo (simplificado):
+---
 
-  1. Calcular `\(\phi_m = x_j^T y\)` para cada `\(j=1, \dots d\)`
-
-  2. Calcular `\(z_m = \sum_j \phi_m x_j\)`
+## RN vs otros modelos
   
-  3. Resolver regresión lineal `\(y = z_m \theta_m\)`
+* Automatizan la creación de nuevas variables
+
+* Esto simplifica la resolución de nuevos problemas:
   
-  4. Actualizar salida, `\(y^{(m)} = y^{(m-1)} + \theta_m^* z_m\)`
-
-  5. Ortogonalizar `\(x_j\)` con respecto a `\(z_m\)`
+  1. no necesario tanto conocimiento específico 
   
-  6. Repetir hasta un `\(m &lt; d\)`
+  2. proceso mucho menos costoso que crear nuevas variables a mano
+  
+* Además la creación de estas nuevas representaciones forma parte del aprendizaje
 
-
-???
-
-1. Calcular correlacion
-
-2. Combinar linealmente las variables usando correlacion con y como peso -&gt; genera nueva dirección
-
-3. Ajustar regresión sobre esa dirección
-
-4. Añadir a la salida
-
-5. Ortogonalizar
-
+  * específicas para la tarea a resolver `\(\Rightarrow\)` mejor rendimiento
+  
 ---
 
-## PLS vs PCR
+class: center, middle
 
-* PCR:
-
-  * no supervisado (solo usa `\(\Xbf\)` para calcular las componentes principales)
-
-  * elige direcciones `\(z_m\)` que maximizan la varianza
-
-* PLS: 
-
-  * crea combinaciones lineales de las variables originales, pero de manera supervisada (usando el valor de `\(y\)`)
-
-  * si `\(m = d\)` obtenemos el estimador de mínimos cuadrados
-
-  * produce una series de direcciones ortogonales `\(z_1, z_2, \dots, z_m\)`
+![](img/nn_vs_rest.png)
   
-  * elige direcciones que maximizan la varianza **y** tienen mucha correlación con la salida `\(y\)`
-
 ---
 
-## PLS y PCR en R
+## Ejemplo
 
-* Paquete `pls`
+* Clasificar imágenes médicas en sano/enfermo
 
-* Funciones `pcr()` y `plsr()`
+* Antes: una parte importante del trabajo consistía en procesar las imágenes del microscopio para extraer características:
 
-* Ambas eligen el valor óptimo de `\(k\)` usando validación cruzada
+  1. segmentar células
+  
+  2. identificar núcleo
+  
+  3. etc.
+  
+* Redes neuronales profundas extraen automáticamente características **útiles para la tarea de clasificar**
 
-???
-
-**Ejercicio prostate**
-
-[PLS y PCR](http://www.science.smith.edu/~jcrouser/SDS293/labs/lab11-r.html)
-
-Comparación de Least Squares, Best subset, Ridge, Lasso, PLS, PCR (Forward stepwise, Elastic Net?) ESL, tabla 3.3
+.center[
+![](img/nn_vs_rest_ex.png)
+]
 
 ---
 
 class: middle, center, inverse
-
-# Descenso coordinado
-
----
-
-## Motivación
-
-* Lasso es un problema
-
-  1. cuadrático
-  
-  2. convexo
-  
-  3. sin restricciones
-  
-* Pero
-
-  1. No diferenciable en 0
-  
-  2. No es fuertemente convexo `\(\Longrightarrow\)` peor tasa de convergencia algoritmos estándar
-  
----
-
-## Descenso coordinado
-
-* Resuelve el de forma eficiente el problema de optimización de los GLM con:
-
-  * regularización `\(l_1\)`
-  
-  * regularización `\(l_1 + l_2\)`
-
-* Esquema básico:
-
-  1. Seleccionar una coordenada `\(j \in \{1,\dots, d\}\)`
-  
-  2. Fijar el valor del resto
-
-  3. Optimizar con respecto respecto a la coordenada `\(j\)`
-
-      * solución analítica!
-  
-  4. Repetir para el resto de las coordenadas varias veces
-  
----
-
-## Descenso coordinado: Lasso
-
- * Función que minimiza Lasso, `\(f(w) = || y - \Xbf w ||_2^2 + \lambda || w ||_1\)`
- 
- * Fijamos `\(w_k = \tilde{w}_k\)` para `\(k \neq j\)`
-  
- * Aislamos `\(w_j\)`, `$$f(\tilde{w}, w_j) = \frac{1}{2} \sum_{i=1}^n{\big(y_i - \sum_{k \neq j}{x_{ik}\tilde{w}_k} - x_{ij}w_j\big)^2} + \lambda \sum_{k \neq j}{|\tilde{w}_k|} + \lambda |w_j|$$`
- 
- * Derivada, si `\(w_j \neq 0\)`:
-
-`\begin{align}
-\frac{\partial f}{w_j} &amp;= -\sum_{i=1}^n{x_{ij}\big(y_i - \sum_{k \neq j}x_{ik}w_{k} - x_{ij}w_j\big)} + \lambda\, \text{sign}(w_j) = \\
-&amp;= -\underbrace{\sum_{i=1}^n{x_{ij}\big(y_i - \sum_{k \neq j}x_{ik}\tilde{w}_{k}\big)}}_{a_j} + \underbrace{\sum_{i=1}^n{x_{ij}^2}}_{b_j} w_j + \lambda\, \text{sign}(w_j)
-\end{align}`
-
-* Si estandarizamos las variables, `\(b_j = 1\)`
-
-???
-
-Problema Lasso univariante donde la salida son los residuos parciales `\(y_i - y_i^{(j)}\)` (sin influencia de `\(j\)`)
+# Perceptrón multicapa
 
 ---
 
-class: middle, center
+## Introducción
 
-![:video 800 600](img/subdiff.mp4)
+* Hasta ahora hemos visto modelos de regresión y clasificación que recibían como input combinaciones lineales de *funciones base*.
 
-[Mathurin Massias](https://twitter.com/mathusmassias/status/1109304558356824064?s=20), Twitter
+* Para que estos modelos resulten prácticos, debemos adaptar las funciones base a los datos.
+
+* Idea: 
+
+  1. Fijar el número de funciones base de antemano
+  
+  2. Darles forma paramétrica
+  
+  3. Aprender parámetros usando los datos.
+
+* **Aprender la representación**.
+
+* *Perceptrón multicapa* o *feed-forward neural network*.
 
 ---
 
-## Solución: operador *soft-thresholding*
+## Perceptrón multicapa (1)
 
-1. Si `\(w_j &lt; 0, \quad -a_j + w_j + \lambda = 0 \quad \Rightarrow \quad w_j = a_j + \lambda \quad \text{para} \quad a_j &lt; \lambda\)`
-  
-2. Si `\(w_j &gt; 0, \quad -a_j + w_j - \lambda = 0 \quad \Rightarrow \quad w_j = a_j - \lambda \quad \text{para} \quad a_j &gt; \lambda\)`
-  
-3. Si `\(w_j = 0, \quad 0 \in [ -a_j - \lambda,\, -a_j + \lambda ] \quad \Rightarrow \quad -\lambda \leq a_j \leq \lambda\)`
-  
-![:vspace 6]
-  
-* Operador *soft-thresholding*, `$$S_\gamma(z) = \text{sign}(z)\max(|z| - \gamma,\, 0)$$`
+* ¿Cómo parametrizamos las funciones de base?
 
-* Actualización: `$$\tilde{w}_j = S_\lambda(a_j) = \bigg(\sum_{i=1}^n{x_{ij}\big(y_i - \sum_{k \neq j}x_{ik}\tilde{w}_{k}}\big)\bigg)$$`
+* Hasta ahora
 
-???
+`\begin{equation}
+y(x,w) = f \left( \sum_{j=1}^M w_j \phi_j(x) \right)
+\end{equation}`
 
-Residuos parciales (sin influencia de j)
+* Siendo `\(f\)` una **activación no lineal**.
 
-Coeficiente de minimos cuadrados de los residuos
+* Objetivo: parametrizar `\(\phi_j(x)\)` y aprender los parámetros.
+
+* Idea de las NN: parametrizar `\(\phi_j(x)\)` de la misma manera que `\(y(x,w)\)`.
 
 ---
 
-class: middle, center
+## Perceptrón multicapa (2)
 
-![:video 800 600](img/prox.mp4)
+* MLP básico: 
 
-[Pierre Ablin](https://twitter.com/PierreAblin/status/1109114419127218176?s=20), Twitter
+  1. Construír `\(M\)` combinaciones lineales del input `\(x_1, \dots, x_D\)`:
+`\begin{equation}
+a_j = \sum_{i=1}^D w_{ji}^{(1)} x_i + w_{j0}
+\end{equation}`
+  
+  2. Transformar cada activación `\(a_j\)` usando una función de activación **no lineal** y **diferenciable**: `\(z_j = h(a_j)\)`.
+  
+  3. Repetir 1 y 2, tantas veces como **capas ocultas** queramos en la red.
+  
+  4. Por último, en la capa de salida, las activaciones se transforman con una función de activación adecuada para producir los outputs `\(y_k\)`.
+
+* Notación: `\(w_{ji}\)` son *pesos*, `\(w_{j0}\)` son *biases*, `\(a_j\)` son *activaciones*.
 
 ---
 
-## Descenso coordinado: implementación
+## Perceptrón multicapa (3)
 
-* *Regularization path*: resolver el problema para valores decrecientes de `\(\lambda\)`
-  
-  1. Empezamos por el valor más pequeño de `\(\lambda\)` para el cual `\(w^* = 0\)`, `\(\lambda_\text{max}\)`
+* **Ejercicio**: ¿Por qué las activaciones tienen que ser funciones no lineales diferenciables?
 
-  2. Terminamos con `\(\lambda_\text{min}\)` tal que `\(\lambda_\text{min}/\lambda_\text{max} = \epsilon\)`
-  
-  3. Creamos una rejilla de `\(M\)` valores en escala logarítmica
-  
-* *Warm-starts*: valor inicial de los pesos `\(w\)` es el valor anterior de `\(w^*(\lambda)\)` 
+---
 
-* Reducir el coste computacional:
+## Perceptrón multicapa (4)
   
-  1. Calcular y almacenar `\(x_j^T y\)` (cache)
-  
-  2. Aprovechar dispersión: multiplicar solo elementos distintos de 0
+* La función de activación de la capa de salida, dependerá de la naturaleza de los datos.
 
-  3. Descartar coeficientes `\(0\)` antes de tiempo
+* Para problemas de regresión, la activación será la identidad `\(y_k = a_k\)`.
+
+* Para clasificación binaria (output es una probabilidad) la activación será la sigmoide `\(y_k = \sigma(a_k)\)`.
+
+* Para clasificación multiclase, usaremos la softmax.
+
+`\begin{equation}
+\text{softmax}(a)_i = \frac{e^{a_i}}{\sum_k e^{a_k}}
+\end{equation}`
+
+
+---
+
+## Perceptrón multicapa (5)
+
+* ¿Funciones de activación de capas intermedias?
+
+* Históricamente, la sigmoide.
+
+* Hoy en día, las más conocidas son la *REctifier Linear Unit (RELU)*, tangente hiperbólica y variantes.
+
+&lt;center&gt;
+![:scale 100%](./img/activation.png)
+&lt;/center&gt;
+
+
+---
+
+## Perceptrón multicapa (6)
+
+* Componiendo lo visto, obtenemos una NN de dos capas (e.g. con salida binarias)
+
+`\begin{equation}
+y(w,x) = \sigma \left( \sum_{j=0}^M w_{j}^{(2)} h \left( \sum_{i=0}^D w_{ji}^{(1)} x_i\right) \right)
+\end{equation}`
+
+* El proceso de evaluar esta función se denomina *forward propagation*.
+.center[
+![:scale 60%](./img/neuron.svg)
+
+[Fuente](https://victorzhou.com/blog/intro-to-neural-networks/)
+]
+
+---
+
+## Perceptrón multicapa (7)
+
+* Gráficamente...
+
+&lt;center&gt;
+![:scale 100%](./img/nn.jpg)
+&lt;/center&gt;
+
+
+
+---
+
+## Teorema de aproximación universal
+
+* Asumimos:
+
+  - red neuronal feed-forward
+  
+  - una capa oculta
+  
+  - número de neuronas finito
+  
+  - algunas funciones de activación (por ej. sigmoidea)
+  
+* Aproxima cualquier función continua con precisión arbitrarea
+
+* **Pero**: el número de neuronas necesario es exponencialmente grande
+
 
 ---
 
 class: middle, center, inverse
+# Perceptrón multicapa - Entrenamiento
 
-# Variantes del Lasso
-
----
-
-## Variantes del Lasso
-
-Múltiples variantes:
-  
-  * Group Lasso
-  
-  * Fused Lasso
-  
-  * Generalized Lasso
-  
-  * Relaxed Lasso
-  
-  * ...
-
-Ejemplo: Group Lasso 
-
-  * Variables tienen `\(J\)` grupos predefinidos
-  
-  * Regularización: norma `\(l_{2, 1}\)`, `\(||w||_{2, 1} = \sum_{j = 1}^J \sqrt{|| w_j ||_2}\)`
-  
-  * Coeficientes de grupo `\(j\)` son o bien todos `\(0\)` o todos `\(\neq 0\)`
 
 ---
 
-## FISTA
+## Regresión
 
-* Descenso por gradiente proyectado:
+* Asumiremos que el target `\(t\)` sigue una distribución normal
 
-  1. Paso de descenso por gradiente
-  
-  2. Proyectamos a la región de las restricciones usando operador proximal
-  
-* En general, el operador proximal es otro problema de optimización: `$$\text{prox}_g(v) = \arg\min_{z} \bigg(g(z) + \frac{1}{2}|| z - v ||_2^2\bigg)$$`
-  
-* En ocasiones tiene solución analítica:
+`\begin{equation}
+p(t \vert y(x,w), \beta^{-1})
+\end{equation}`
 
-  * Lasso: `\(\text{prox}_{\lambda ||\cdot||_1}(v) = S_\lambda(v)\)`
-  
-* Existen "trucos" para acelerar la convergencia (Nesterov)
+* Donde la activación de la capa de salida es la identidad.
+
+* Dado conjunto de entrenamiento `\(X = \lbrace x_1, \dots, x_N \rbrace\)`, `\(\boldsymbol{t} = t_1, \dots, t_N\)`, maximizar la verosimilitud es equivalente a
+
+`\begin{equation}
+w_{ML} = \arg\min_w E(w) = \arg\min_w \frac{1}{2} \sum_{i=1}^N \lbrace y(x_n,w) - t_n\rbrace^2
+\end{equation}`
+
+* Ojo: la **no linealidad** de la red hace que `\(E(w)\)` no sea convexo... en la práctica conseguiremos converger a mínimo local.
+
+* En regresión multi-target, se asume **independencia condicional** de los targets dados `\(x\)` y `\(w\)` y el análisis es idéntico.
 
 ---
 
-## Referencias
+## Clasificación binaria
 
-1. Tibshirani (1996). [Regression Shrinkage and Selection via the Lasso](https://www.jstor.org/stable/2346178?seq=1#page_scan_tab_contents)
+* `\(t=1\)` representa una pertenencia a una clase y `\(t=0\)` a la otra. La NN tiene una única salida con activación sigmoide.
 
-2. Zou, Hastie (2004). [Regularization and variable selection via the
-elastic net](https://web.stanford.edu/~hastie/Papers/B67.2%20%282005%29%20301-320%20Zou%20&amp;%20Hastie.pdf)
+* Interpretamos `\(y(x,w)\)` como `\(p(t=1 \vert x )\)`. Entonces 
 
-3. Beck, Teboulle (2008). [A Fast Iterative Shrinkage-Thresholding Algorithm
-for Linear Inverse Problems](https://epubs.siam.org/doi/abs/10.1137/080716542)
+`\begin{equation}
+p(t \vert x,w) = y(x,w)^t \lbrace 1-y(x,w) \rbrace^{1-t}
+\end{equation}`
 
-4. Friedman, Hastie, Tibshirani (2009). [https://web.stanford.edu/~hastie/Papers/glmnet.pdf](https://web.stanford.edu/~hastie/Papers/glmnet.pdf)
+* Dado conjunto de entrenamiento, maximizar la verosimilitud equivale a minimizar la **entropía cruzada**
+
+`\begin{equation}
+E(w) = - \sum_{n=1}^N \lbrace t_n \log y_n + (1-t_n) \log (1-y_n) \rbrace
+\end{equation}`
+
+* Para clasificación binaria **multi-etiqueta**, usamos una red con `\(K\)` outputs sigmoidales. 
+
+* Asumiendo independencia condiciones de las etiquetas dado el input, el análisis es idéntico.
+
+
+---
+
+## Clasificación multiclase
+
+* Las `\(K\)` posibles clases se escriben en notación One-Hot-Encoding.
+
+* Si la observación `\(n\)`-ésima, pertenece a la clase 1, entonces `\(t_{n1}=1\)` y `\(t_{nj} = 0\)` para `\(j \neq 1\)`.
+
+* La red tiene `\(K\)` salidas interpretadas como `\(y_k(x,w) = p(t_{\cdot k} = 1 \vert x)\)`.
+
+* Maximizar la verosimilitud equivale a minimizar
+
+`\begin{equation}
+E(w) = - \sum_{n=1}^N \sum_{k=1}^K t_{nk} \log y_k(x_n,w)
+\end{equation}`
+
+* La red tiene `\(K\)` unidades de salida con activación softmax.
+
+---
+
+## Optimización
+
+* Una vez definida la función de coste, hay que encontrar los pesos que la optimicen.
+
+* `\(\nabla E(w) = 0\)` no se puede resolver analíticamente. Tenemos que usar métodos numéricos iterativos.
+
+* Los más importantes: **basados en el gradiente**, pues como veremos, evaluar el gradiente es muy eficiente gracias al algoritmo de *backpropagation*.
+
+* Descenso por el gradiente requiere inicializar los pesos e iterar:
+
+`\begin{equation}
+w^{t+1} = w^t - \eta \nabla E(w^t)
+\end{equation}`
+
+* En cada iteración, accedemos a todos los datos para calcular `\(\nabla E(w^t)\dots\)`  complejidad `\(\mathcal{O}(N)\)`.
+
+---
+
+
+## Descenso por el gradiente estocástico (SGD)
+
+* La función de coste tiene esta forma:
+
+`\begin{equation*}
+E(w) = \sum_{i=1}^N E_i(w)
+\end{equation*}`
+
+--
+
+* En cada iteración, escogemos **un dato** al azar
+
+`\begin{equation*}
+w^{t+1} = w^t - \eta_t \nabla_w E_i(w^t)
+\end{equation*}`
+
+
+---
+
+
+## Descenso por el gradiente estocástico (SGD)
+
+* También podemos seleccionar un **minilote** `\(\mathcal{B}\)`
+
+`\begin{equation*}
+w^{t+1} = w^t - \eta_t \nabla_w \frac{1}{B} \sum_{i \in \mathcal{B}} f_i(w^t)
+\end{equation*}`
+
+* La complejidad pasa de `\(\mathcal{O}(N)\)` a `\(\mathcal{O}(B)\)`, además, no es necesario tener toda la matriz `\(X\)`, sino solo los datos del minilote `\(\mathcal{B}\)`.
+
+* Otra ventaja: mayor probabilidad de escapar óptimos locales que con GD, un punto estacionario de la función objetivo en GD no lo será en SGD generalmente.
+
+
+---
+
+## Descenso por el gradiente estocástico (SGD)
+
+* Usando resultados de aproximación estocástica de Robbins &amp; Monro (1954), se puede demostrar convergencia a mínimo local siempre y cuando
+
+  1. Las tasas de aprendizaje cumplen estas condiciones:
+`\begin{align*}
+\sum_{t=0}^\infty \eta_t &amp;= \infty \\
+\sum_{t=0}^\infty \eta^2_t &amp;&lt; \infty
+\end{align*}`
+
+  2. El gradiente que se utiliza en cada iteración es un estimador **no sesgado** del gradiente.
+
+
+---
+
+## Eecto de la estocasticidad
+
+![:scale 100%](./img/sgd.png)
+
+
+---
+class: middle, center, inverse
+# Perceptrón muilticapa. Backpropagation
+
+---
+## Backpropagation (1)
+
+* Técnica **eficiente** para evaluar `\(\nabla E(w)\)` aprovechando la estructura de perceptrones multicapa.
+
+* En mayoría de problemas `\(E(w) = \sum_n E_n (w)\)`, nos centramos en evaluar `\(\nabla E_n(w)\)`.
+
+* En un MLP, cada unidad calcula combinación lineal de sus inputs `\(z_i\)`, `\(a_j = \sum_i w_{ji}z_i\)`.
+
+* Como output devuelve `\(z_j = h(a_j)\)`.
+
+--
+
+* Supongamos que para cada instancia the train, hemos calculado inputs y outputs de todas las neuronas (*forward propagation*).
+
+* Evaluamos la derivada de `\(E_n\)` respecto `\(w_{ji}\)`
+
+`\begin{equation}
+\frac{\partial E_n}{\partial w_{ji}} = \frac{\partial E_n}{\partial a_j} \frac{\partial a_j}{\partial w_{ji}} := \delta_j z_i 
+\end{equation}`
+
+* Donde `\(\delta_j = \frac{\partial E_n}{\partial a_j}\)`.
+
+---
+## Backpropagation (2)
+
+* Para calcular las derivadas, únicamente necesitamos calcular `\(\delta_j\)` para cada unidad.
+
+* Para cualquier unidad oculta, `\(E_n\)` es función de `\(a_j\)`, únicamente a través de las `\(a_k\)` de la capa siguiente.
+
+`\begin{equation}
+\delta_j =  \frac{\partial E_n}{\partial a_j} = \sum_k \frac{\partial E_n}{\partial a_k} \frac{\partial a_k}{\partial a_{j}}
+\end{equation}`
+
+&lt;center&gt;
+![:scale 50%](./img/back.png)
+&lt;/center&gt;
+
+---
+## Backpropagation (2)
+
+* Efectuando las derivadas vemos que
+
+`\begin{equation}
+\delta_j =  h'(a_j) \sum_k w_{kj} \delta_k
+\end{equation}`
+
+* Para unidad de salida calcular `\(\delta_j\)` es trivial, e.g. `\(E_n = \frac{1}{2} (y_n - t_n)^2\)`, y la activación es la identidad, entonces 
+
+`\begin{equation}
+\delta = y_n - t_n
+\end{equation}`
+
+---
+## Backpropagation (3)
+
+* El algoritmo 
+
+  1. Meter vector `\(x_n\)` a la red y realizar el *forward pass* de la red, para calcular inputs y outputs en cada unidad.
+  
+  2. Evaluar `\(\delta\)` en la unidad de salida.
+  
+  3. Propagar las `\(\delta\)`'s hacia atrás para obtener `\(\delta_j\)` en cada unidad usando
+`\begin{equation}
+\delta_j =  h'(a_j) \sum_k w_{kj} \delta_k
+\end{equation}`
+  
+  4. Evaluar las derivadas usando
+`\begin{equation}
+\frac{\partial E_n}{\partial w_{ji}} = \delta_j z_i 
+\end{equation}`
+
+---
+## Backpropagation (4)
+
+* Aspecto crucial de *backpropagation* es su eficiencia.
+
+* Sea `\(W\)` el número totad de pesos.
+
+* Calcular el gradiente usando *backpropagation*, requiere `\(O(W)\)` operaciones, para `\(W\)` suficientemente grande.
+
+* Esto es así, pues el número de pesos suele ser mucho mayor que el número de neuronas.
+
+* Esto implica que el cuello de botella en la computación es evaluar las combinaciones lineales. La evaluación de las activaciones requiere menos carga, pues hay tantas activaciones como neuronas.
+
+---
+## Backpropagation (5)
+
+* **Ejercicio**: ¿Cuál es la complejidad de evaluar la derivada usando diferencias centrales?
+`\begin{equation}
+\frac{\partial E_n}{\partial w_{ji}} = \frac{E_n(w_{ji} + \epsilon) - E_n(w_{ji} - \epsilon)}{2 \epsilon} + O(\epsilon^2)
+\end{equation}`
+
+
+---
+class: middle, center, inverse
+# Perceptrón multicapa. Regularización
+
+---
+
+## Regularización (1) 
+
+* Número de unidades de input y output se eligen teniendo en cuenta la dimensionalida de los datos.
+
+* Número de unidades ocultas `\(M\)`, es un hiperparámetro que regula la complejidad del modelo.
+
+* Existirá un valor óptimo que equilibre entre underfitting y overfitting.
+
+* Alternativa: escoger `\(M\)` lo suficientemente grande, y añadir regularizadores:
+
+  1. L2: `\(\lambda\Vert w \Vert_2^2\)`, conocido como *weight decay*.
+  
+  2. L1: `\(\lambda \Vert w \Vert_1\)`
+  
+---
+
+## Regularización (2) 
+
+* Otra alternativa es usar *early stopping*.
+
+* Como entrenamos de forma iterativa, podemos observar el comportamiento de una estimación del error de generalización mientras vamos entrenando.
+
+* Guardamos un conjunto de validación, y en cada época, calculamos el error producido en este conjunto de validación.
+
+* Observaremos que el error primero decrece, y después, cuando se hace overfitting, crece.
+
+* Dejaremos de entrenar antes de que esto último suceda.
+
+* Esto, en algunos casos, es equivalente a reducir la complejidad efectiva de la red.
+
+---
+
+## Regularización (3)
+
+* Otra alternativa es usar *dropout*.
+
+* En cada ejemplo de cada iteración del entrenamiento, "apagar" cada neurona con probabilidad `\(1-p\)`.
+
+* En cada iteración se entrena una red de tamaño efectivo menor.
+
+&lt;center&gt;
+![:scale 90%](./img/dropout.png)
+&lt;/center&gt;
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
