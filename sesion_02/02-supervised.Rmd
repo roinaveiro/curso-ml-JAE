@@ -291,7 +291,7 @@ Modelos seleccion: variables entran o salen del modelo
 
 class: middle, center
 
-![:video 600 600](./img/lasso.mp4)
+![:video 600 600](img/lasso.mp4)
 
 [Pierre Ablin](https://twitter.com/PierreAblin/status/1107625298936451073?s=20), Twitter
 
@@ -299,7 +299,7 @@ class: middle, center
 
 class: middle, center
 
-![](./img/orthonormal.png)
+![](img/orthonormal.png)
 
 ???
 
@@ -309,7 +309,7 @@ $X^T X = I$, no ocurre en la practica pero interesante para ver la diferencia en
 
 class: middle, center
 
-![](./img/constraint_regions.png)
+![](img/constraint_regions.png)
 
 ---
 
@@ -369,7 +369,7 @@ donde, $$|| w ||_p^p = \sum_{i=1}^d{|x_i|^p}$$
 
 class: center, middle
 
-![](./img/laplace.svg)
+![](img/laplace.svg)
 
 [Wikipedia, "Laplace distribution"](https://en.wikipedia.org/wiki/Laplace_distribution)
 
@@ -377,7 +377,7 @@ class: center, middle
 
 class: middle, center
 
-![](./img/penalties.png)
+![](img/penalties.png)
 
 ---
 
@@ -399,7 +399,7 @@ class: middle, center
 
 class: center, middle
 
-![:scale 85%](./img/penalties.svg)
+![:scale 85%](img/penalties.svg)
 
 ???
 
@@ -488,7 +488,7 @@ Z abarca el espacio de columnas de X
 
 class: middle, center
 
-![](./img/ridge_vs_pcr.png)
+![](img/ridge_vs_pcr.png)
 
 ---
 
@@ -650,7 +650,7 @@ Problema Lasso univariante donde la salida son los residuos parciales $y_i - y_i
 
 class: middle, center
 
-![:video 800 600](./img/subdiff.mp4)
+![:video 800 600](img/subdiff.mp4)
 
 [Mathurin Massias](https://twitter.com/mathusmassias/status/1109304558356824064?s=20), Twitter
 
@@ -680,7 +680,7 @@ Coeficiente de minimos cuadrados de los residuos
 
 class: middle, center
 
-![:video 800 600](./img/prox.mp4)
+![:video 800 600](img/prox.mp4)
 
 [Pierre Ablin](https://twitter.com/PierreAblin/status/1109114419127218176?s=20), Twitter
 
