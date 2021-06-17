@@ -1,0 +1,76 @@
+---
+title: "Compresión de rostros usando Análisis de Componentes Principales"
+author: "Roi Naveiro"
+date: "01/04/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+En este ejercicio se propone aplicar PCA a una base de datos de rostros.
+
+
+```{r, echo=T}
+# NOT RUN {
+# read a sample file (R logo)
+img <- readJPEG(system.file("img", "Rlogo.jpg", package="jpeg"))
+
+# read it also in native format
+img.n <- readJPEG(system.file("img", "Rlogo.jpg", package="jpeg"), TRUE)
+
+# if your R supports it, we'll plot it
+if (exists("rasterImage")) { # can plot only in R 2.11.0 and higher
+  plot(1:2, type='n')
+
+  rasterImage(img, 1.2, 1.27, 1.8, 1.73)
+  rasterImage(img.n, 1.5, 1.5, 1.9, 1.8)
+}
+# }
+
+jj <- readJPEG("riaño.jpg",native=TRUE)
+plot(0:1,0:1,type="n",ann=FALSE,axes=FALSE)
+rasterImage(jj,0,0,1,1)
+
+
+```
+
+3. Representar algunas imágenes
+
+```{r, echo=T}
+plot(faces[,,,10])
+```
+
+4. Aplicar PCA
+
+```{r, echo=T}
+faces_flat <- t(array(faces, dim=c(128^2*3, 4466)))
+# 2 mins con alrededor de 5000 caras
+proy_faces <- prcomp(faces_flat[, 1:(128^2*3)], center = FALSE)
+```
+
+5. Encontrar el número de componentes necesarias para que el error de reconstrucción sea como mucho del 1%.
+
+```{r, echo=T}
+eigvals <- proy_faces$sdev^2
+ratio <- eigvals / sum(eigvals)
+ratio_acum <- cumsum(ratio)
+
+M = which(ratio_acum >= 0.99)[1]
+```
+
+```{r, echo=T}
+faces_recons_flat <- proy_faces$x[,1:M] %*% t(proy_faces$rotation[,1:M])
+faces_recons_flat[faces_recons_flat<0] <- 0
+faces_recons_flat[faces_recons_flat>1] <- 1
+
+faces_recons <- array(t(faces_recons_flat), dim=dim(faces))
+fs = Image(faces_recons, colormode = 'Color')
+plot((fs[,,,10]))
+```
+
+
+
+
+
+
+

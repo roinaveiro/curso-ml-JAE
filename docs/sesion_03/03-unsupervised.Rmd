@@ -1,7 +1,7 @@
 ---
-title: "Conceptos generales de aprendizaje no supervisado"
-subtitle: "Curso de aprendizaje automático para el INE"
-author: "Víctor Gallego y Roi Naveiro"
+title: "Aprendizaje No Supervisado"
+subtitle: "Curso JAE ICMAT 2021"
+author: "Roi Naveiro"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
@@ -37,7 +37,6 @@ class: middle, center, inverse
 
 **Objetivo**: 
 
-  * Aprender una regla de predicción (hipótesis), $h: \mathcal{X} \rightarrow \mathcal{Y}$
   
   * Visión probabilística: estimar $P(Y|X)$
   
@@ -52,7 +51,7 @@ class: middle, center, inverse
   
 **Facilidades**:
 
-  * $\mathcal{Y}$ es tiene dimensión baja
+  * $\mathcal{Y}$ tiene dimensión baja
   
   * Es sencillo cuantificar el error: natural definir función de coste. Error = valor esperado de coste bajo $P(X,Y)$.
   
@@ -61,7 +60,7 @@ class: middle, center, inverse
 
 ## Aprendizaje No Supervisado
 
-**Dados**:
+**Datos**:
 
 * No hay salidas: $S = \{x_i\}_{i=1}^N$, con $x_i \in \mathcal{X}$
 
@@ -86,7 +85,6 @@ class: middle, center, inverse
 
 * No hay una medida directa de cuantificar el error
 
-* Métodos heurísticos no solo para motivar los algoritmos sino también para medir la calidad de los resultados
 
 ```{r, fig.height=3.5, fig.align='center', echo=F}
 library(ggplot2)
@@ -107,87 +105,12 @@ p
 
 * Métodos de estimación de densidades
 
-* Manifold learning: PCA, PCA no lineal, self-organizing maps, modelos de variables latentes, ...
+* Manifold learning (reducción de la dimensionalidad): PCA, PCA no lineal, self-organizing maps, modelos de variables latentes, autoencoders, ...
 
 * Encontrar regiones convexas del espacio que contengan modas de $P(X)$: análisis de cluster, modelos de mixturas,
 ...
 
 * Muestrear de $P(X)$: GAN, autoencoders, autoencoders variacionales, ...
-
-
-
-
-
----
-
-class: middle, center, inverse
-
-# Repaso Álgebra Lineal
-
----
-
-## Aplicaciones lineales
-
-* Dado $\boldsymbol{x} \in \mathbb{R}^N$, una **aplicación (función) lineal**  $f : \mathbb{R}^N \rightarrow \mathbb{R}^M$ se expresa como
-$$
-f(\boldsymbol{x}) = W \boldsymbol{x}
-$$
-donde $W$ es una matriz de tamaño $M \times N$.
-
-* Para el caso $M = N$, los **autovalores** $\lambda \in \mathbb{R}$ y los **autovectores** $\boldsymbol{v} \in \mathbb{R}^M$ son los elementos que cumplen
-
-$$
-W \boldsymbol{v} = \lambda \boldsymbol{v}
-$$
-
-
-* Si los vectores columna de $W = \left[ w_1, \ldots, w_M \right]$ son ortonormales (esto es, $w_i^{\intercal} w_j = 0, w_i^{\intercal} w_i = 1$), se dice que $W$ es una proyección ortonormal. En este caso, los vectores $\left[ w_1, \ldots, w_M \right]$ forman una base ortonormal.
-
-
----
-
-
-## Derivadas matriciales
-
-* Será necesario considerar derivadas de vectores respecto a escalares. En este caso,
-
-$$
-\left( \frac{\partial \boldsymbol{a}}{\partial x}  \right)_i = \frac{\partial \boldsymbol{a}_i}{\partial x}
-$$
-
-* También podemos derivar respecto a vectores o matrices:
-
-\begin{equation}
-\left( \frac{\partial x}{\partial \boldsymbol{a}}  \right)_i = \frac{\partial x}{\partial \boldsymbol{a}_i}, \left( \frac{\partial \boldsymbol{a}}{\partial \boldsymbol{b}}  \right)_{i,j} = \frac{\partial \boldsymbol{a}_i}{\partial \boldsymbol{b}_j} 
-\end{equation}
-
-* *Ejercicio*. Probar que
-
-$$
-\frac{\partial \boldsymbol{x}^{\intercal} \boldsymbol{a}}{\partial \boldsymbol{x}} = \frac{\partial \boldsymbol{a}^{\intercal} \boldsymbol{x}}{\partial \boldsymbol{x}} = \boldsymbol{a}
-$$
-y que
-$$
-\frac{\partial \boldsymbol{A} \boldsymbol{B}}{\partial x} = \frac{\partial \boldsymbol{A}}{\partial x}\boldsymbol{B} + \frac{\partial \boldsymbol{B}}{\partial x}\boldsymbol{A}.
-$$
-
----
-
-
-## Optimización
-
-* Queremos optimizar una función diferenciable $f(\boldsymbol{x})$ tal que $f : \mathbb{R}^N \rightarrow \mathbb{R}$. Los **óptimos locales** verifican
-
-$$
-\frac{\partial f(\boldsymbol{x})}{\partial \boldsymbol{x}} = 0
-$$
-
-* En el caso de querer optimizar $f(\boldsymbol{x})$ sujeto a demás a una restricción $g(\boldsymbol{x}) = 0$, podemos utilizar el **Teorema de los multiplicadores de Lagrange** y optimizar la siguiente función objetivo (ya sin restricciones):
-
-$$
-f(\boldsymbol{x}) + \lambda g(\boldsymbol{x})
-$$
-
 
 
 ---
@@ -500,171 +423,29 @@ class: middle, center, inverse
 
 ## Ejemplo práctico
 
-* Código en *exercises/03-unsupervised/src/tSNE_coil20R.R*.
+* Código en *exercises/C_data_projection.Rmd*.
 
-* Base de datos COIL20: imágenes de 20 objetos desde 72 ángulos diferentes.
+* Base de datos MNIST
 
-```{r, fig.height=5.5, fig.align='center', echo=F, cache=T, message=F}
-library(coil20)
-# coil20 <- download_coil20(verbose = TRUE)  # Tarda unos 3 min, solo hacerlo la primera vez
-# Para que vaya más rápido, cargamos uno ya descargado antes
-# saveRDS(coil20, file = "coil20.rds")
-coil20 <- readRDS(file = '../../exercises/03-unsupervised/src/coil20.rds')
-
-#1440 imagenes en escala de gris a 128 x 128  
-# (20 objetos con 72 poses cada), 
-# con 16,384 features (128 x 128 px). 
-#dim(coil20)
-
-show_object(coil20, object = 4, pose = 0)
-
-```  
+![:scale 100%](./img/7.png) 
 
 ---
 
 ## Ejemplo práctico
 
-* Código en *exercises/03-unsupervised/src/tSNE_coil20R.R*.
+* Código en *exercises/C_data_projection.Rmd*.
 
-* Base de datos COIL20: imágenes de 20 objetos desde 72 ángulos diferentes.
+* Base de datos MNIST
 
-```{r, fig.height=5.5, fig.align='center', echo=F, cache=T, message=F}
-library(coil20)
-# coil20 <- download_coil20(verbose = TRUE)  # Tarda unos 3 min, solo hacerlo la primera vez
-# Para que vaya más rápido, cargamos uno ya descargado antes
-# saveRDS(coil20, file = "coil20.rds")
-coil20 <- readRDS(file = '../../exercises/03-unsupervised/src/coil20.rds')
+![:scale 100%](./img/9.png) 
 
-#1440 imagenes en escala de gris a 128 x 128  
-# (20 objetos con 72 poses cada), 
-# con 16,384 features (128 x 128 px). 
-#dim(coil20)
-
-show_object(coil20, object = 4, pose = 1)
-
-```  
-
----
-
-## Ejemplo práctico
-
-* Código en *exercises/03-unsupervised/src/tSNE_coil20R.R*.
-
-* Base de datos COIL20: imágenes de 20 objetos desde 72 ángulos diferentes.
-
-```{r, fig.height=5.5, fig.align='center', echo=F, cache=T, message=F}
-library(coil20)
-# coil20 <- download_coil20(verbose = TRUE)  # Tarda unos 3 min, solo hacerlo la primera vez
-# Para que vaya más rápido, cargamos uno ya descargado antes
-# saveRDS(coil20, file = "coil20.rds")
-coil20 <- readRDS(file = '../../exercises/03-unsupervised/src/coil20.rds')
-
-#1440 imagenes en escala de gris a 128 x 128  
-# (20 objetos con 72 poses cada), 
-# con 16,384 features (128 x 128 px). 
-#dim(coil20)
-
-show_object(coil20, object = 4, pose = 2)
-
-```  
-
----
-
-## Ejemplo práctico
-
-* Código en *exercises/03-unsupervised/src/tSNE_coil20R.R*.
-
-* Base de datos COIL20: imágenes de 20 objetos desde 72 ángulos diferentes.
-
-```{r, fig.height=5.5, fig.align='center', echo=F, cache=T, message=F}
-library(coil20)
-# coil20 <- download_coil20(verbose = TRUE)  # Tarda unos 3 min, solo hacerlo la primera vez
-# Para que vaya más rápido, cargamos uno ya descargado antes
-# saveRDS(coil20, file = "coil20.rds")
-coil20 <- readRDS(file = '../../exercises/03-unsupervised/src/coil20.rds')
-
-#1440 imagenes en escala de gris a 128 x 128  
-# (20 objetos con 72 poses cada), 
-# con 16,384 features (128 x 128 px). 
-#dim(coil20)
-
-show_object(coil20, object = 4, pose = 3)
-
-```  
-
----
 
 ## Ejemplo práctico
 
 * Proyección a 2D mediante PCA:
 
-![:scale 100%](./img/COIL_PCA.png)
+![:scale 100%](./img/MNIST_PCA.png)
   
----
-
-class: middle, center, inverse
-
-# Cuestiones de implementación
-
----
-
-
-## Datos de alta dimensionalidad
-
-* En muchos casos $D > N$, por ejemplo imágenes: $|D| = \mbox{ancho} \times \mbox{alto} \times 3$.
-
-* La complejidad de calcular los autovectores de una matriz $D\times D$ escala según $\mathcal{O}(D^3)$. 
-
-* $N$ puntos en un espacio de dimensión $D > N$ forman un subespacio de dimensión $N-1$ (¡o menos!).
-
-
-* No tiene sentido aplicar PCA con $M > N-1$: saldrán autovalores $0$.
-
----
-
-### Datos de alta dimensionalidad
-
-* Consideramos $\boldsymbol{X} \in \mathbb{R}^{N \times D}$ cuya fila n-ésima es $x_n - \bar{x}$. 
-
-* La matriz de covarianzas es $\boldsymbol{S} = N^{-1}\boldsymbol{X}^\intercal \boldsymbol{X}$, luego obtenemos autovectores mediante
-
-$$
-\frac{1}{N}\boldsymbol{X}^\intercal \boldsymbol{X} \boldsymbol{u}_i = \lambda_i \boldsymbol{u}_i
-$$
-
-* Multiplicando ambos miembros por la izquierda por $\boldsymbol{X}$ llegamos a
-
-$$
-\frac{1}{N}\boldsymbol{X} \boldsymbol{X}^\intercal (\boldsymbol{X} \boldsymbol{u}_i) = \lambda_i (\boldsymbol{X} \boldsymbol{u}_i)
-$$
-con lo que $\boldsymbol{v}_i = \boldsymbol{X} \boldsymbol{u}_i$ es un autovector de la matriz $N^{-1}\boldsymbol{X} \boldsymbol{X}^\intercal$, de tamaño $N \times N$.
-
-
-* ¡La complejidad ahora es $\mathcal{O}(N^3)!$
-
-
----
-
-### Datos de alta dimensionalidad
-
-* Pero tenemos que obtener los autovectores en el espacio original... 
-
-* Multiplicando ahora por $\boldsymbol{X}^\intercal$:
-
-$$
-(\frac{1}{N}\boldsymbol{X}^\intercal \boldsymbol{X}) (\boldsymbol{X}^\intercal \boldsymbol{v}_i) = \lambda_i (\boldsymbol{X}^\intercal \boldsymbol{v}_i)
-$$
-
-* Con lo que $\boldsymbol{X}^\intercal \boldsymbol{v}_i$ es autovector de $\boldsymbol{S}$ con mismo autovalor $\lambda_i$.
-
-En resumen:
-
-1. Calculamos autovectores $\boldsymbol{v}_i$.
-
-2. $\boldsymbol{u}_i =  \boldsymbol{X}^\intercal \boldsymbol{v}_i$ y normalizamos $\boldsymbol{u}_i$.
-
-3. En concreto, $$\boldsymbol{u}_i = \frac{1}{(N\lambda_i)^{1/2}} \boldsymbol{X}^\intercal \boldsymbol{v}_i   $$
-
 ---
 
 class: middle, center, inverse
@@ -794,6 +575,8 @@ class: middle, center, inverse
 D( X\Vert \textbf{W} \textbf{H}  ) =  \sum_{i=1}^N \sum_{j=1}^p \left( \textbf{X}_{ij} \log \frac{\textbf{X}_{ij}}{[\textbf{W} \textbf{H}]_{ij}} - \textbf{X}_{ij} + [\textbf{W} \textbf{H}]_{ij} \right)
 \end{equation}
 
+---
+## NMF - Algoritmo
 
 Aquí se explica cómo resolver los problemas de optimización correspondientes.
 
@@ -814,7 +597,9 @@ Demuéstrese que encontrar $\textbf{W} \textbf{H}$ que minimizan la *Divergencia
 <center> ![:scale 100%](./img/XHW.png) </center>
 
 * Cada elemento de $\textbf{X}$ es número de compras que el cliente ha realizado del producto.
---
+
+---
+# NMF - Sistemas de Recomendación
 
 * Cada columna de $\textbf{W}$ define un segmento. Cuanto mayor es el *peso* de un producto en el segmento, más determinado está este segmento por el producto. 
 
@@ -859,18 +644,13 @@ class: middle, center, inverse
 
 # Métodos no lineales reducción de dimensionalidad
 
-
 ---
 
-# Métodos no lineales
+# Métodos no lineales - Autoencoders
 
 * PCA realiza una transformación lineal a los datos: $z_n = \textbf{W}x_n$.
 
-* ¿Cómo podemos extenderlo de forma no lineal?
-
---
-
-* ¡Apilando múltiples capas!
+* Podemos extenderlo utilizando múltiples capas...
 
 $$
 z^{(1)}_n = \sigma(\textbf{W}^{(i)} x_n)
@@ -883,10 +663,30 @@ z^{(i+1)}_n = \sigma(\textbf{W}^{(i)} z^{(i)}_n)
 $$
 donde $\sigma$ es una función no lineal (por ejemplo $\sigma(z) = \max \lbrace 0, z \rbrace$).
 
-* Es la base de los *autoencoders* (autocodificadores), uno de los bloques principales del *deep learning* (aprendizaje pofundo).
+
+
+---
+
+# Autoencoders
+
+* Idea
+
+$$
+\phi :{\mathcal {X}}\rightarrow {\mathcal {F}} \\
+$$
+$$
+ \psi :{\mathcal {F}}\rightarrow {\mathcal {X}}\\
+$$
+$$
+ \phi ,\psi ={\underset {\phi ,\psi }{\operatorname {arg\,min} }}\,\|{\mathcal {X}}-(\psi \circ \phi ){\mathcal {X}}\|^{2}
+$$
+
+* Si la dimensión de $\mathcal{F}$ es menor que la de $\mathcal{X}$, hablamos de *undercomplete autoencoders*.
+
+* Se aprenden representaciones latentes **útiles** para reconstruír los datos.
+
 
 * [Ejemplo de autoencoders en Keras](https://blog.keras.io/building-autoencoders-in-keras.html)
-
 
 ---
 
@@ -939,22 +739,21 @@ C = \sum_i KL(P_i || Q_i) = \sum_i \sum_j p_{j|i} \log \frac{p_{j|i}}{q_{j|i}}
 
 ## De SNE a tSNE
 
-* SNE simétrico: optimizamos más eficientemente $C = KL(P||Q)$ definiendo:
+* SNE simétrico:
 
 \begin{equation}
 p_{ij} = \frac{p_{j|i} + p_{i|j}}{2n}
 \end{equation}
-\begin{equation}
-q_{ij} = \frac{\exp \lbrace -||  y_i - y_j  ||^2 \rbrace }{ \sum_{k \neq j} \exp \lbrace -||  y_i - y_j  ||^2  \rbrace}
-\end{equation}
 
-* tSNE: en lugar de kernel Gaussiano usamos t-Student en el espacio $\mathcal{Y}$:
+* Queremos encontrar puntos en espacio de dimensión menor, que reflejen las similaridades lo mejor posible.
+
+* tSNE: medimos similaridades en espacio $\mathcal{Y}$ usando t-Student:
 
 \begin{equation}
 q_{ij} = \frac{(1 + ||  y_i - y_j  ||^2)^{-1} }{ \sum_{k \neq j} (1 + ||  y_i - y_j  ||^2)^{-1}}
 \end{equation}
 
-(la t-Student tiene colas más pesadas que la Normal, evitando que los puntos se colapsen mucho en el espacio $\mathcal{Y}$)
+(la t-Student tiene colas más pesadas que la Normal, promoviendo que puntos muy disimilares en el espacio de llegada estén más lejos.)
 
 
 
@@ -962,19 +761,21 @@ q_{ij} = \frac{(1 + ||  y_i - y_j  ||^2)^{-1} }{ \sum_{k \neq j} (1 + ||  y_i - 
 
 ## Ejemplo práctico
 
-* Base de datos COIL20: imágenes de 20 objetos desde 72 ángulos diferentes.
+* Base de datos MNIST.
 
 * Proyección a 2D mediante PCA:
 
-![:scale 90%](./img/COIL_PCA.png)
+![:scale 90%](./img/MNIST_PCA.png)
 
 ---
 
 ## Ejemplo práctico
 
-* Proyección a 2D mediante tSNE:
+* Base de datos MNIST.
 
-![:scale 100%](./img/COIL_TSNE.png)
+* Proyección a 2D mediante TSNE:
+
+![:scale 90%](./img/MNIST-TSNE.png)
 
 
 ---
