@@ -21,7 +21,6 @@
 
 * Conceptos Aprendizaje No supervisado.
 * PCA, NMF, TSNE
-* CLustering
 * Práctica
 
 ## Sesión 4 (2 horas) – Aprendizajo por refuerzo y retos de investigación
