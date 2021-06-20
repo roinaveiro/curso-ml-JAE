@@ -1,5 +1,9 @@
 # Machine Learning: Fundamentos, aplicaciones y computación
 
+
+## [Sesión 0 – Estructura](https://roinaveiro.github.io/curso-ml-JAE/sesion_00/00-intro.pdf)
+
+
 ## [Sesión 1 (2 horas) – Introducción](https://roinaveiro.github.io/curso-ml-JAE/sesion_01/01-intro.pdf)
 
 * ¿Qué es Machine Learning?
