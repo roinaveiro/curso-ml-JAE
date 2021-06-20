@@ -1,6 +1,6 @@
 ---
-title: "PCA para visualización de datos"
-author: Victor Gallego y Roi Naveiro
+title: "Visualización de datos"
+author: Roi Naveiro y David Ríos Insua
 date: "01/04/2019"
 output:
   pdf_document: default
@@ -75,13 +75,11 @@ Usaremos el paquete prcomp
 ```{r, message=F}
 proy_pca <- prcomp(test[, 1:28^2], retx = T) ## Ojo, quitar LABEL, sino son trampas
 
-jpeg(filename="mnist_pca.jpg", res=600)
 # Representamos las dos primeras componentes
 plot(proy_pca$x[, 1:2], type="n")
 text(proy_pca$x[, 1:2], labels = test$y, cex = 0.5,
      col = rainbow(length(levels(test$y)))[test$y])
 
-dev.off()
 ```
 
 ### Pregunta

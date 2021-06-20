@@ -1,7 +1,7 @@
 ---
-title: "Redes Neuronales para clasificación de dígitos"
-author: Victor Gallego y Roi Naveiro
-date: "30/05/2019"
+title: "Lab 2 JAE"
+author: "Roi Naveiro y David Ríos Insua"
+date: "22/06/2021"
 output:
   pdf_document: default
   html_document: default
@@ -219,7 +219,6 @@ plot(history)
 model %>% evaluate(x_test, y_test,verbose = 0)
 ```
 
-¿Detectas algún signo de overfitting?
 
 ## Guardar y leer modelos
 
@@ -234,7 +233,7 @@ new_model = load_model_hdf5("mnist_weights.hdf5", custom_objects = NULL, compile
 
 
 ```{r}
-new_model %>% predict_classes(x_test)
+preds = new_model %>% predict_classes(x_test)
 ```
 
 ## Otros modelos
