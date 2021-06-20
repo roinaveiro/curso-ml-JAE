@@ -1,0 +1,156 @@
+---
+title: "LAB 1. ML JAE"
+author: ""
+date: "20/6/2021"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción
+
+Lab de apoyo al tema 1 del curso JAE ML
+
+
+## Sobreajuste en un ejemplo sencillo
+
+Este ejemplo se refiere a sobreajuste. De paso se 
+presentan unos cuantos comandos y estructuras relevantes en R
+
+```{r, eval=FALSE}
+# fijamos semilla por reproducibilidad
+set.seed(1)
+# generamos los datos que queremos analizar con los que hacemos entrenamiento
+n <- 10
+x <- seq(0, 1, length.out = n)
+x
+y <- 1.5*x - x^2 + rnorm(n, 0, 0.05)
+data <- data.frame(x=x, y=y)
+# ajustamos tres modelos cuadrático, pol grado 9, lineal 
+fit1 <- lm(y ~ x + I(x^2), data=data)
+fit2 <- lm(y ~ x + I(x^2) + I(x^3) + I(x^4) + I(x^5) 
+                 + I(x^6) + I(x^7) + I(x^8) + I(x^9), 
+           data=data)
+fit3 <- lm(y ~ x, data=data)
+# datos para facilitar la representación
+x_new <- seq(0, 1, length.out=500)
+newdata <- data.frame(x=x_new)
+y_pred1 <- predict(fit1, newdata=newdata)
+y_pred2 <- predict(fit2, newdata=newdata)
+# un dato de test
+ntest <- 3
+xtest <- runif(ntest)
+ytest <- 1.5*xtest - xtest^2 + rnorm(ntest, 0, 0.05)
+```
+Representamos.
+```{r, eval=FALSE}
+# todos estos juntos
+plot(data)
+lines(x_new, y_pred1, col="blue")
+lines(x_new, y_pred2, col="red")
+abline(fit3, col="purple")
+points(xtest, ytest, col="pink")
+legend("bottomright", 
+       c(expression(w[0] + w[1]*x), 
+         expression(w[0] + w[1]*x + w[2]*x^2),
+         expression(w[0] + w[1]*x + w[2]*x^2 + ldots + w[9]*x^9)), 
+       lty=1, lwd=1.5, col=c("purple", "blue", "red"), inset=0.04)
+```
+
+
+
+
+
+
+## kNNs
+
+En esta parte hacemos un recordatorio de Knns y alguna otras ideas fundamentales en ML.
+* Modelo sencillo que usa las observaciones cercanas a $x$ para realizar la predicción: $$f(x) = \frac{1}{k} \sum_{x_i \in N_k(x)} y_i$$ donde $N_k(x)$ son las $k$ observaciones más cercanas
+
+* Necesaria una métrica (por ej. distancia euclidea)
+
+* Se puede usar tanto para problemas de clasificación como regresión
+
+* Muy sensible al valor de $k$
+
+
+
+Cargamos primero la librería class que tiene bastantes cosas de clasificación.
+Busca package class R para más info. Vamos a emplear los datos iris, así que vemos algunas cosas de ellos.
+```{r ,eval=FALSE}
+library(class) 
+plot(iris)       
+summary(iris)    
+str(iris)
+head(iris)
+fix(iris)
+n <- nrow(iris)
+n
+```
+Nuestro objetivo es intentar predecir la quinta variable (el tipo de iris) en función de las otras cuatro variables. Usaremos un algoritmo knn. Partiremos el conjunto de datos usando 75% de datos para entrenamiento y el resto para test. Haz primero
+help(sample)!!!
+```{r ,eval=FALSE}
+help(sample)
+idx <- sample(n, n*0.75)
+idx
+train <- iris[idx, ]
+test <- iris[-idx, ]
+train
+test
+```
+Separamos ahora la variable de respuesta (la quinta) de las variables explicativas en el conjunto de entrenamiento y en el de test. Observa en el panel de RStudio como describe la variable y 
+```{r ,eval=FALSE}
+y_train <- train[,  5]
+X_train <- train[, -5]
+y_test <- test[,  5]
+X_test <- test[, -5]
+```
+Ajustamos ahora un modelo knn con k=3. Con ayuda de help(knn) entendemos la sintaxis de knn y el algoritmo empleado. Después ejecutamos y vemos la tasa de acierto. 
+```{r ,eval=FALSE}
+y_pred <- knn(X_train, X_test, y_train, k=3)
+y_pred
+mean(y_test == y_pred)*100
+```
+Los resultados parecen buenos.  Lógicamente el anterior se refiere a una sola partición test-train. Aquí exploramos 10 réplicas del proceso.
+```{r ,eval=FALSE}
+xx<-matrix(0,1,10)
+yy<-matrix(0,1,10)
+    for (i in 1:10)
+    { idx <- sample(n, n*0.75)
+train <- iris[idx, ]
+test <- iris[-idx, ]
+y_train <- train[,  5]
+X_train <- train[, -5]
+y_test <- test[,  5]
+X_test <- test[, -5]
+y_pred <- knn(X_train, X_test, y_train, k=3)
+yy[i]<-mean(y_test == y_pred)*100
+xx[i]<-i
+}
+  plot(xx[1,],yy[1,])   
+mean(yy[1,])
+sd(yy[1,])
+```
+Aquí k es un parámetro a fijar y debemos elegirlo. Mostramos los resultados desde k=1 hasta 10. Esto solo explica/ilustra el problema. Normalemnet usamos cross-validation. 
+```{r ,eval=FALSE}
+yy<-matrix(0,1,10)
+    for (i in 2:10)
+    { 
+     idx <- sample(n, n*0.6)
+train <- iris[idx, ]
+test <- iris[-idx, ]
+y_train <- train[,  5]
+X_train <- train[, -5]
+y_test <- test[,  5]
+X_test <- test[, -5] 
+y_pred <- knn(X_train, X_test, y_train, k=i)
+yy[i]<-mean(y_test == y_pred)*100
+}
+ plot(yy[1,2:10])   
+```    
