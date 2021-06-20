@@ -1,7 +1,7 @@
 ---
 title: "Aprendizaje Supervisado"
 subtitle: "Curso JAE ICMAT 2021"
-author: "Roi Naveiro"
+author: "Roi Naveiro y David Ríos Insua"
 date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
