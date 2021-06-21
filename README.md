@@ -27,7 +27,7 @@
 * PCA, NMF, TSNE
 * Práctica
 
-## Sesión 4 (2 horas) – Aprendizajo por refuerzo y retos de investigación
+## [Sesión 4 (2 horas) – Aprendizajo por refuerzo y retos de investigación](https://roinaveiro.github.io/curso-ml-JAE/sesion_04/04-RL.pdf#1)
 
 * Procesos de Decisión de Markov
 * Aprendizaje por refuerzo
