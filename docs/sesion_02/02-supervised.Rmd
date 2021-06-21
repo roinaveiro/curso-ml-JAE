@@ -171,11 +171,15 @@ La función de pérdida log-loss es un poco distinta a como la vimos antes
 * Componentes:
   
   * Distribución de $y$ con media $\mu$
-  * Predictor lineal, $$g(\mu) = w^T x$$ donde $g(\cdot)$ es la función de media
+  * Predictor lineal, $$g(\mu) = w^T x$$ donde $g(\cdot)$ es la función de enlace
 
-* La función de media proporciona la relación entre la media de la distribución y el predictor lineal
+* La función de enlace proporciona la relación entre la media de la distribución y el predictor lineal
 
-* El inverso de la función de media, $g^{-1}(\cdot)$ se conoce con el nombre de **función de enlace**
+* El inverso de la función de enlace, $g^{-1}(\cdot)$ se conoce con el nombre de **función de media**
+
+$$
+\mu = \text{E}[y | x] = g^{-1}(w^T x)
+$$
 
 ---
 
@@ -183,9 +187,11 @@ La función de pérdida log-loss es un poco distinta a como la vimos antes
 
 ¿Cuál es su distribución y función de enlace?
 
-???
+--
 
-* La función de enlace es la inversa de la anterior,
+* Distribución de Bernoulli.
+
+* La función de enlace:
 
 $$w^T x_i = g(\mu) = \ln\left(\frac{\mu}{1 - \mu}\right)$$
 
@@ -228,7 +234,7 @@ fit <- glm(type ~ ., data=Pima.tr, family=binomial)
 
 ## Problemas (entre otros)
 
-  * Poca flexibilidad (Sesgo grande), pues asumimos linealidad
+  * Poca flexibilidad (sesgo grande), pues asumimos linealidad
   
   * Se puede solventar complicando el modelo (a mano) pero...
   
@@ -357,6 +363,7 @@ class: middle, center, inverse
   
 * Ejemplo: extraer variables de datos no tabulares (audio, video, imágenes, texto)
 
+
 ???
 * Añadimos una capa intermedia (capa oculta)
 
@@ -368,11 +375,7 @@ class: middle, center, inverse
 
 
 
----
 
-class: center, middle
-
-![](./img/coordinate_change.png)
 
 ---
 
@@ -425,9 +428,25 @@ class: middle, center, inverse
 
 ## Introducción
 
-* Hasta ahora hemos visto modelos de regresión y clasificación que recibían como input combinaciones lineales de *funciones base*.
+* Hasta ahora hemos visto modelos de regresión y clasificación...
 
-* Para que estos modelos resulten prácticos, debemos adaptar las funciones base a los datos.
+$$
+y(x, w) = f( w_1 x_1 + w_2  x_2 + \dots w_p  x_M )
+$$
+
+* Que podemos aumentar con **funciones base**
+
+$$
+y(x, w) = w_1 \phi_1(x) + w_2 \phi_2(x) + \dots w_p \phi_M(x)
+$$
+
+* ¿Cómo escogemos las funciones base?
+
+---
+
+# Introducción
+
+* Adaptar las funciones base a los datos.
 
 * Idea: 
 
@@ -450,7 +469,7 @@ class: middle, center, inverse
 * Hasta ahora
 
 \begin{equation}
-y(x,w) = f \left( \sum_{j=1}^M w_j \phi_j(x) \right)
+y(x,w) = f \left( \sum_{j=1}^p w_j \phi_j(x) \right)
 \end{equation}
 
 * Siendo $f$ una **activación no lineal**.
@@ -465,9 +484,9 @@ y(x,w) = f \left( \sum_{j=1}^M w_j \phi_j(x) \right)
 
 * MLP básico: 
 
-  1. Construír $M$ combinaciones lineales del input $x_1, \dots, x_D$:
+  1. Construír $M$ combinaciones lineales del input $x_1, \dots, x_p$:
 \begin{equation}
-a_j = \sum_{i=1}^D w_{ji}^{(1)} x_i + w_{j0}
+a_j = \sum_{i=1}^p w_{ji}^{(1)} x_i + w^{(1)}_{j0}
 \end{equation}
   
   2. Transformar cada activación $a_j$ usando una función de activación **no lineal** y **diferenciable**: $z_j = h(a_j)$.
@@ -559,7 +578,7 @@ y(w,x) = \sigma \left( \sum_{j=0}^M w_{j}^{(2)} h \left( \sum_{i=0}^D w_{ji}^{(1
   
   - algunas funciones de activación (por ej. sigmoidea)
   
-* Aproxima cualquier función continua con precisión arbitrarea
+* Aproxima cualquier función contínua con precisión arbitraria
 
 * **Pero**: el número de neuronas necesario es exponencialmente grande
 
@@ -659,18 +678,18 @@ w^{t+1} = w^t - \eta \nabla E(w^t)
 * La función de coste tiene esta forma:
 
 \begin{equation*}
-E(w) = \sum_{i=1}^N E_i(w)
+E(w) = \frac{1}{N}\sum_{i=1}^N E_i(w)
 \end{equation*}
 
 --
 
-* En cada iteración, escogemos **un dato** al azar
+* En cada iteración, se estima el gradiente escogiendo **un dato** al azar
 
 \begin{equation*}
 w^{t+1} = w^t - \eta_t \nabla_w E_i(w^t)
 \end{equation*}
 
-
+* ¿Cuál es el valor esperado de este estimador?
 ---
 
 
@@ -704,7 +723,7 @@ w^{t+1} = w^t - \eta_t \nabla_w \frac{1}{B} \sum_{i \in \mathcal{B}} f_i(w^t)
 
 ---
 
-## Eecto de la estocasticidad
+## Efecto de la estocasticidad
 
 ![:scale 100%](./img/sgd.png)
 
@@ -718,7 +737,7 @@ class: middle, center, inverse
 
 * Técnica **eficiente** para evaluar $\nabla E(w)$ aprovechando la estructura de perceptrones multicapa.
 
-* En mayoría de problemas $E(w) = \sum_n E_n (w)$, nos centramos en evaluar $\nabla E_n(w)$.
+* En mayoría de problemas $E(w) = \frac{1}{N} \sum_n E_n (w)$, nos centramos en evaluar $\nabla E_n(w)$.
 
 * En un MLP, cada unidad calcula combinación lineal de sus inputs $z_i$, $a_j = \sum_i w_{ji}z_i$.
 
@@ -815,7 +834,7 @@ class: middle, center, inverse
 
 ## Regularización (1) 
 
-* Número de unidades de input y output se eligen teniendo en cuenta la dimensionalida de los datos.
+* Número de unidades de input y output se eligen teniendo en cuenta la dimensionalidad de los datos.
 
 * Número de unidades ocultas $M$, es un hiperparámetro que regula la complejidad del modelo.
 
@@ -856,4 +875,14 @@ class: middle, center, inverse
 <center>
 ![:scale 90%](./img/dropout.png)
 </center>
+
+---
+# Referencias
+
+* Bishop, C. M. (2006). Pattern recognition. Machine learning, 128(9).
+
+* Friedman, J., Hastie, T., & Tibshirani, R. (2001). The elements of statistical learning (Vol. 1, No. 10). New York: Springer series in statistics.
+
+* Efron, B., & Hastie, T. (2016). Computer age statistical inference (Vol. 5). Cambridge University Press.
+
 
