@@ -4,7 +4,7 @@
     <title>Aprendizaje Supervisado</title>
     <meta charset="utf-8" />
     <meta name="author" content="Roi Naveiro y David Ríos Insua" />
-    <meta name="date" content="2021-06-21" />
+    <meta name="date" content="2021-06-22" />
     <script src="libs/header-attrs-2.9/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="custom.css" type="text/css" />
@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 # Aprendizaje Supervisado
 ## Curso JAE ICMAT 2021
 ### Roi Naveiro y David Ríos Insua
-### 2021-06-21
+### 2021-06-22
 
 ---
 
@@ -340,7 +340,7 @@ class: middle, center
 
 * Ridge regressión: distribución Normal
 
-* Lasso: distribución de Laplace, `\(\tau = 1/\lambda\)` `$$f(w) = \frac{1}{2\tau} \exp\bigg(-\frac{|w|}{\tau}\bigg)$$`
+* Lasso: distribución de Laplace `$$f(w) = \frac{1}{2\tau} \exp\bigg(-\frac{|w|}{\tau}\bigg)$$`
 
 * Estimador: máximo de la distribución a posteriori (MAP)
   
@@ -350,13 +350,13 @@ class: middle, center
 
 ## Nota
 
-* Lasso (Elastic Net) suelen hacer referencia a: minimizar MSE + norma `\(l_1\)` (+ norma `\(l_2\)`)
+* Lasso (ridge) suele hacer referencia a: minimizar MSE + norma `\(l_1\)` (+ norma `\(l_2\)`)
 
 * MSE puede reemplazarse por otras funciones de pérdida
 
 * Por ej. cualquier GLM
 
-* En esos casos hablamos de regresión logística, Poisson, Gamma + regularización Ridge/Lasso/Elastic Net
+* En esos casos hablamos de regresión logística, Poisson, Gamma + regularización Ridge/Lasso
 
 
 ---

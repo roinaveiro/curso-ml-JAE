@@ -320,7 +320,7 @@ class: middle, center
 
 * Ridge regressión: distribución Normal
 
-* Lasso: distribución de Laplace, $\tau = 1/\lambda$ $$f(w) = \frac{1}{2\tau} \exp\bigg(-\frac{|w|}{\tau}\bigg)$$
+* Lasso: distribución de Laplace $$f(w) = \frac{1}{2\tau} \exp\bigg(-\frac{|w|}{\tau}\bigg)$$
 
 * Estimador: máximo de la distribución a posteriori (MAP)
   
@@ -330,13 +330,13 @@ class: middle, center
 
 ## Nota
 
-* Lasso (Elastic Net) suelen hacer referencia a: minimizar MSE + norma $l_1$ (+ norma $l_2$)
+* Lasso (ridge) suele hacer referencia a: minimizar MSE + norma $l_1$ (+ norma $l_2$)
 
 * MSE puede reemplazarse por otras funciones de pérdida
 
 * Por ej. cualquier GLM
 
-* En esos casos hablamos de regresión logística, Poisson, Gamma + regularización Ridge/Lasso/Elastic Net
+* En esos casos hablamos de regresión logística, Poisson, Gamma + regularización Ridge/Lasso
 
 
 ---

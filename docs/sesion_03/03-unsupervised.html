@@ -4,7 +4,7 @@
     <title>Aprendizaje No Supervisado</title>
     <meta charset="utf-8" />
     <meta name="author" content="Roi Naveiro y David Ríos Insua" />
-    <meta name="date" content="2021-06-20" />
+    <meta name="date" content="2021-06-22" />
     <script src="libs/header-attrs-2.9/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link rel="stylesheet" href="custom.css" type="text/css" />
@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 # Aprendizaje No Supervisado
 ## Curso JAE ICMAT 2021
 ### Roi Naveiro y David Ríos Insua
-### 2021-06-20
+### 2021-06-22
 
 ---
 
@@ -167,12 +167,14 @@ class: middle, center, inverse
   
     $$  \frac{1}{N} \sum_{n=1}^N (\boldsymbol{u}_1^\intercal x_n - \boldsymbol{u}_1^\intercal \bar{x})^2 = \boldsymbol{u}_1^\intercal \boldsymbol{S} \boldsymbol{u}_1 $$
     
-    
+
 
 ---
 
 
 ## PCA: Formulación por Máxima Varianza (3)
+
+* `\(S = \frac{1}{N} \sum_{i=1}^N (x_n - \bar{x})(x_n - \bar{x})^T\)`, matriz de covarianza. 
 
 * Ahora ya podemos plantear un problema de optimización, con objetivo:
 
@@ -261,7 +263,7 @@ J = \frac{1}{N}\sum_{n=1}^N \Vert x_n - \tilde{x}_n \Vert^2
 
 --
 
-* Minimizando respecto `\(\{z_{in}\}\)`
+* Minimizando respecto `\(\{z_{ni}\}\)`
 
 `\begin{equation}
 z_{nj} = x_n^\top u_j
@@ -334,10 +336,10 @@ class: middle, center, inverse
 
 ## Aplicación: compresión de datos
 
-* Cada punto de dimensión `\(D\)` se representa como vector de dimensión `\(M\)`
+* Substituyendo los resultados de la minimización... cada punto de dimensión `\(D\)` se representa como vector de dimensión `\(M\)`
 
 `\begin{equation}
-\tilde{x}_n = \bar{x} + \sum_{i=1}^M (x_n^\top - \bar{x}^\top u_i)u_i
+\tilde{x}_n = \bar{x} + \sum_{i=1}^M (x_n^\top u_i - \bar{x}^\top u_i)u_i
 \end{equation}`
 
 ---
@@ -419,7 +421,7 @@ class: middle, center, inverse
 
 ## Ejemplo práctico
 
-* Código en *exercises/C_data_projection.Rmd*.
+* Código en *exercises/lab3.Rmd*.
 
 * Base de datos MNIST
 
@@ -429,12 +431,12 @@ class: middle, center, inverse
 
 ## Ejemplo práctico
 
-* Código en *exercises/C_data_projection.Rmd*.
+* Código en *exercises/lab3.Rmd*.
 
 * Base de datos MNIST
 
 ![:scale 100%](./img/9.png) 
-
+---
 
 ## Ejemplo práctico
 
@@ -528,13 +530,11 @@ donde `\(\lambda_i\)` son los `\(D-M\)` autovalores de la matriz de covarianza d
 \text{cov}[\boldsymbol{z} \vert \boldsymbol{x}] &amp;=&amp; \sigma^2 \boldsymbol{M}^{-1}
 \end{eqnarray}`
 
-con `\(\boldsymbol{M} = \boldsymbol{W}^\top  \boldsymbol{W} + \sigma^2 \boldsymbol{I}\)`.
+con `\(\boldsymbol{M} = \boldsymbol{W}_{ML}^\top  \boldsymbol{W}_{ML} + \sigma^2 \boldsymbol{I}\)`.
 
 --
 
 * En el límite `\(\sigma^2 \rightarrow 0\)`, la media a posteriori representa una proyección ortogonal del punto al espacio latente y la covarianza es cero, por tanto la densidad es singular, recuperando PCA.
-
-* **IMPORTANTE**: PPCA permite definir una distribución Gaussiana multivariante en la que el número de grados de libertad, puede ser contralado y al mismo tiempo capturar correlaciones en los datos.
 
 
 ---
@@ -696,18 +696,11 @@ $$
 \mathcal{Y} := \lbrace y_1, \ldots, y_N \in \mathbb{R}^M \rbrace
 $$
 
-de forma que ambas distribuciones *se parezcan* lo más posible
-
-$$
-\min_{\mathcal{Y}} C(\mathcal{X}, \mathcal{Y})
-$$
-* donde `\(\mathcal{C}\)` será una **divergencia** (mide similaridad entre distribuciones).
-
 ---
 
 ##  Stochastic Neighbor Embedding (SNE)
 
-* SNE convierte **distancias euclídeas** en **similaridades** , que pueden ser interpretadas como probabilidades:
+* SNE define **similaridades** entre pares de datos, que pueden ser interpretadas como probabilidades:
 
 `\begin{equation}
 p_{j|i} = \frac{\exp \lbrace -||  x_i - x_j  ||^2/2\sigma_i^2 \rbrace }{ \sum_{k \neq j} \exp \lbrace -||  x_i - x_j  ||^2 / 2\sigma_i^2 \rbrace}
@@ -716,9 +709,15 @@ p_{j|i} = \frac{\exp \lbrace -||  x_i - x_j  ||^2/2\sigma_i^2 \rbrace }{ \sum_{k
 q_{j|i} = \frac{\exp \lbrace -||  y_i - y_j  ||^2 \rbrace }{ \sum_{k \neq j} \exp \lbrace -||  y_i - y_j  ||^2  \rbrace}
 \end{equation}`
 
+* La similiradad entre `\(x_i\)` y `\(x_j\)` es la probabilidad condicional `\(p_{j|i}\)` de que `\(x_i\)` escogiese a `\(x_j\)` como vecino, si los vecinos se escogen en proporción a su probabilidad bajo una Gaussiana centrada en `\(x_i\)`.
+
+---
+
+##  Stochastic Neighbor Embedding (SNE)
+
 * Las distribuciones de los vecinos del punto `\(i\)` son `\(P_i = \lbrace p_{1|i}, \ldots, p_{N|i} \rbrace\)` y `\(Q_i = \lbrace q_{1|i}, \ldots, q_{N|i} \rbrace\)`
 
-* Optimizamos la divergencia de Kullback-Leiber
+* Optimizamos la divergencia de Kullback-Leiber entre las distribuciones
 
 `\begin{equation}
 C = \sum_i KL(P_i || Q_i) = \sum_i \sum_j p_{j|i} \log \frac{p_{j|i}}{q_{j|i}}
@@ -737,7 +736,7 @@ p_{ij} = \frac{p_{j|i} + p_{i|j}}{2n}
 
 * Queremos encontrar puntos en espacio de dimensión menor, que reflejen las similaridades lo mejor posible.
 
-* tSNE: medimos similaridades en espacio `\(\mathcal{Y}\)` usando t-Student:
+* tSNE: medimos similaridades en espacio `\(\mathcal{Y}\)` usando t-Student (con un grado de libertad):
 
 `\begin{equation}
 q_{ij} = \frac{(1 + ||  y_i - y_j  ||^2)^{-1} }{ \sum_{k \neq j} (1 + ||  y_i - y_j  ||^2)^{-1}}
